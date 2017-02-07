@@ -110,7 +110,7 @@ void *car_arrive(void *arg) {
     struct car *tail = l->buffer[l->tail];
     if (l->in_cars == NULL) return NULL;
     struct car *next_up = l->in_cars;
-    // l->in_cars = next_up->next;
+    l->in_cars = next_up->next;
     next_up->next = head;
     tail->next = next_up;
     int i;
