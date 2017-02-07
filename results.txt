@@ -1,0 +1,5 @@
+Test test_schedule:
+	ERROR: missing cars within out_cars
+	ERROR: missing cars within out_cars
+	ERROR: missing cars within out_cars
+
