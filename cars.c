@@ -108,7 +108,10 @@ void *car_arrive(void *arg) {
 
     struct car *head = l->buffer[l->head];
     struct car *tail = l->buffer[l->tail];
-    if (l->in_cars == NULL) return NULL;
+    if (l->in_cars == NULL) {
+        pthread_mutex_unlock(&l->lock);
+        return NULL;
+    }
     struct car *next_up = l->in_cars;
     l->in_cars = next_up->next;
     next_up->next = head;
@@ -167,6 +170,12 @@ void *car_cross(void *arg) {
  * 
  */
 int *compute_path(enum direction in_dir, enum direction out_dir) {
+    switch (in_dir) {
+        case NORTH:
+            
+
+
+    }
 
 
 
