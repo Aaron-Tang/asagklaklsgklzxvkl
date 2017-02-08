@@ -102,6 +102,8 @@ void init_intersection() {
 void *car_arrive(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
+
+
     while(l->in_buf == l->capacity) {
         pthread_cond_wait(&l->producer_cv, &l->lock);
     }
@@ -155,10 +157,50 @@ void *car_arrive(void *arg) {
  */
 void *car_cross(void *arg) {
     struct lane *l = arg;
+    pthread_mutex_lock(&l->lock);
 
-    /* avoid compiler warning */
-    l = l;
+    while(l->in_buf == 0) {
+        pthread_cond_wait(&l->consumer_cv, &l->lock);
+    }
 
+    // need to update new head
+    struct car *cur_car = l->buffer[l->head];
+    struct car *new_head = cur_car->next;
+    struct car *tail = l->buffer[l->tail];
+    tail->next = new_head;
+
+    int k;
+    for (k = 0; k < l->capacity; k++) {
+        if (l->buffer[k]->id == new_head->id) {
+            l->head = k;
+            break;
+        }
+    }
+
+    // Decrements in_buf because cur_car has left buffer
+    l->in_buf -= 1;
+
+    int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
+    int i;
+    for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+        pthread_mutex_lock(&isection.quad[path[i] - 1]);
+    }
+
+    // adds cur_car to out_cars in exit lane
+    struct lane *exit_lane;
+
+    exit_lane = &isection.lanes[cur_car->out_dir];
+    cur_car->next = exit_lane->out_cars;
+    exit_lane->out_cars = cur_car;
+    exit_lane->passed++;
+
+    for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+        pthread_mutex_unlock(&isection.quad[path[i] - 1]);
+    }
+
+    free(path);
+    pthread_cond_signal(&l->producer_cv);
+    pthread_mutex_unlock(&l->lock);
     return NULL;
 }
 
@@ -170,14 +212,81 @@ void *car_cross(void *arg) {
  * 
  */
 int *compute_path(enum direction in_dir, enum direction out_dir) {
+    int *path = malloc(3 * sizeof(int));
+
+    // OFFICE HOURS QUESTIONS: HOW TO U-TURN
     switch (in_dir) {
         case NORTH:
-            
-
-
+            switch (out_dir) {
+                case NORTH:
+                    path[0] = 1;
+                    path[1] = 2;
+                case EAST:
+                    path[0] = 2;
+                    path[1] = 3;
+                    path[2] = 4;
+                case SOUTH:
+                    path[0] = 2;
+                    path[1] = 3;
+                case WEST:
+                    path[0] = 2;
+                default:
+                    printf("you done fucked up\n");
+            }
+        case EAST:
+            switch (out_dir) {
+                case NORTH:
+                    path[0] = 1;
+                case EAST:
+                    path[0] = 1;
+                    path[1] = 4;
+                case SOUTH:
+                    path[0] = 1;
+                    path[1] = 2;
+                    path[2] = 3;
+                case WEST:
+                    path[0] = 1;
+                    path[1] = 2;
+                default:
+                    printf("you done fucked up\n");
+            }
+        case SOUTH:
+            switch (out_dir) {
+                case NORTH:
+                    path[0] = 1;
+                    path[1] = 4;
+                case EAST:
+                    path[0] = 4;
+                case SOUTH:
+                    path[0] = 3;
+                    path[1] = 4;
+                case WEST:
+                    path[0] = 1;
+                    path[1] = 2;
+                    path[2] = 4;
+                default:
+                    printf("you done fucked up\n");
+            }
+        case WEST:
+            switch (out_dir) {
+                case NORTH:
+                    path[0] = 1;
+                    path[1] = 3;
+                    path[2] = 4;
+                case EAST:
+                    path[0] = 3;
+                    path[1] = 4;
+                case SOUTH:
+                    path[0] = 3;
+                case WEST:
+                    path[0] = 2;
+                    path[1] = 3;
+                default:
+                    printf("you done fucked up\n");
+            }
+        default:
+            printf("you done fucked up\n");
     }
 
-
-
-    return NULL;
+    return path;
 }
