@@ -76,6 +76,8 @@ void init_intersection() {
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
         new_lane->consumer_cv = cons_cv;
+        new_lane->in_cars = NULL;
+        new_lane->out_cars = NULL;
         new_lane->inc = 0;
         new_lane->passed = 0;
         new_lane->head = 0;
@@ -83,8 +85,8 @@ void init_intersection() {
         new_lane->capacity = LANE_LENGTH;
         new_lane->in_buf = 0;
         // DOUBLE CHECK THIS AT OFFICE HOURS
-        struct car *empty_lane = malloc(LANE_LENGTH * sizeof(struct car));
-        new_lane->buffer = &empty_lane;
+        struct car *buffer = malloc(LANE_LENGTH * sizeof(struct car));
+        new_lane->buffer = &buffer;
 
         // add new lane to lanes array
         isection.lanes[i] = *new_lane;
@@ -108,16 +110,24 @@ void *car_arrive(void *arg) {
         pthread_cond_wait(&l->producer_cv, &l->lock);
     }
 
-    struct car *head = l->buffer[l->head];
-    struct car *tail = l->buffer[l->tail];
     if (l->in_cars == NULL) {
         pthread_mutex_unlock(&l->lock);
         return NULL;
     }
     struct car *next_up = l->in_cars;
     l->in_cars = next_up->next;
-    next_up->next = head;
-    tail->next = next_up;
+
+    if (l->in_buf != 0) {
+        struct car *head = l->buffer[l->head];
+        struct car *tail = l->buffer[l->tail];
+        next_up->next = head;
+        tail->next = next_up;
+    }
+    else{
+        next_up->next = next_up;
+    }
+
+
     int i;
     for (i = 0; i < l->capacity; i++) {
         if (l->buffer[i] == NULL) {
@@ -165,6 +175,16 @@ void *car_cross(void *arg) {
 
     // need to update new head
     struct car *cur_car = l->buffer[l->head];
+
+    if (!cur_car) {
+        pthread_mutex_unlock(&l->lock);
+        return NULL;
+    }
+
+    // printf("ID: %d || out_dir: %d || in_dir: %d", cur_car->id, cur_car->out_dir, cur_car->in_dir);
+    printf("ID: %d", cur_car->id);
+
+
     struct car *new_head = cur_car->next;
     struct car *tail = l->buffer[l->tail];
     tail->next = new_head;
@@ -185,6 +205,8 @@ void *car_cross(void *arg) {
     for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
         pthread_mutex_lock(&isection.quad[path[i] - 1]);
     }
+
+    printf("ID: %d || out_dir: %d || in_dir: %d", cur_car->id, cur_car->out_dir, cur_car->in_dir);
 
     // adds cur_car to out_cars in exit lane
     struct lane *exit_lane;
@@ -231,7 +253,7 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                 case WEST:
                     path[0] = 2;
                 default:
-                    printf("you done fucked up\n");
+                    printf("NORTH\n");
             }
         case EAST:
             switch (out_dir) {
@@ -248,7 +270,7 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[0] = 1;
                     path[1] = 2;
                 default:
-                    printf("you done fucked up\n");
+                    printf("EAST\n");
             }
         case SOUTH:
             switch (out_dir) {
@@ -265,7 +287,7 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[1] = 2;
                     path[2] = 4;
                 default:
-                    printf("you done fucked up\n");
+                    printf("SOUTH\n");
             }
         case WEST:
             switch (out_dir) {
@@ -282,7 +304,7 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[0] = 2;
                     path[1] = 3;
                 default:
-                    printf("you done fucked up\n");
+                    printf("WEST\n");
             }
         default:
             printf("you done fucked up\n");
