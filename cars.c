@@ -250,7 +250,7 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                 case WEST:
                     path[0] = 1;
                 default:
-                    printf("NORTH\n");
+                    break;
             }
         case EAST:
             switch (out_dir) {
@@ -269,7 +269,7 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[0] = 0;
                     path[1] = 1;
                 default:
-                    printf("EAST\n");
+                    break;
             }
         case SOUTH:
             switch (out_dir) {
@@ -288,7 +288,7 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[1] = 1;
                     path[2] = 3;
                 default:
-                    printf("SOUTH\n");
+                    break;
             }
         case WEST:
             switch (out_dir) {
@@ -307,10 +307,10 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[2] = 2;
                     path[3] = 3;
                 default:
-                    printf("WEST\n");
+                    break;
             }
         default:
-            printf("you done fucked up\n");
+            break;
     }
 
     return path;
