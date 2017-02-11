@@ -52,7 +52,7 @@ void parse_schedule(char *file_name) {
  * 
  */
 void init_intersection() {
-    int i;
+   
     pthread_mutex_t quadrant_mutex_1 = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_t quadrant_mutex_2 = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_t quadrant_mutex_3 = PTHREAD_MUTEX_INITIALIZER;
@@ -64,6 +64,7 @@ void init_intersection() {
     isection.quad[3] = quadrant_mutex_4;
 
     // OFFICE HOURS
+    int i;
     for (i = 0; i < 4; i++) {
         // initialize locks
         pthread_mutex_t lane_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -71,8 +72,9 @@ void init_intersection() {
         pthread_cond_t cons_cv = PTHREAD_COND_INITIALIZER;
 
         // create a new lane
-        struct lane *new_lane;
+        struct lane* new_lane;
         new_lane = malloc(sizeof(struct lane));
+        memset(new_lane, 0, sizeof(struct lane));
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
         new_lane->consumer_cv = cons_cv;
@@ -85,7 +87,8 @@ void init_intersection() {
         new_lane->capacity = LANE_LENGTH;
         new_lane->in_buf = 0;
         // DOUBLE CHECK THIS AT OFFICE HOURS
-        struct car *buffer = malloc(LANE_LENGTH * sizeof(struct car));
+        struct car* buffer = malloc(LANE_LENGTH * sizeof(struct car));
+        memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car)));
         new_lane->buffer = &buffer;
 
         // add new lane to lanes array
@@ -106,7 +109,7 @@ void *car_arrive(void *arg) {
     pthread_mutex_lock(&l->lock);
     int i;
 
-    for (i = 0; i < l->inc; i++){
+    for (i = 0; i < l->inc; i++) {
         printf("Iteration: %d\n", i);
         while(l->in_buf == l->capacity) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
