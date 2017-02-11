@@ -111,7 +111,7 @@ void *car_arrive(void *arg) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
         l->in_cars[i].next = NULL;
-        l->buffer[tail] = l->in_cars[i];
+        l->buffer[l->tail] = l->in_cars[i];
         l->tail++;
         l->in_buf++;
         pthread_cond_signal(&l->consumer_cv);
