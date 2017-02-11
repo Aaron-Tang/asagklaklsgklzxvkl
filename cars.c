@@ -171,7 +171,7 @@ void *car_cross(void *arg) {
     int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
     int i;
     for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
-        pthread_mutex_lock(&isection.quad[path[i] - 1]);
+        pthread_mutex_lock(&isection.quad[path[i]]);
     }
 
     printf("ID: %d || out_dir: %d || in_dir: %d", cur_car->id, cur_car->out_dir, cur_car->in_dir);
@@ -185,7 +185,7 @@ void *car_cross(void *arg) {
     exit_lane->passed++;
 
     for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
-        pthread_mutex_unlock(&isection.quad[path[i] - 1]);
+        pthread_mutex_unlock(&isection.quad[path[i]]);
     }
 
     free(path);
@@ -209,76 +209,76 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
         case NORTH:
             switch (out_dir) {
                 case NORTH:
+                    path[0] = 0;
+                    path[1] = 1;
+                    path[2] = 2;
+                    path[3] = 3;
+                case EAST:
                     path[0] = 1;
                     path[1] = 2;
                     path[2] = 3;
-                    path[3] = 4;
-                case EAST:
-                    path[0] = 2;
-                    path[1] = 3;
-                    path[2] = 4;
                 case SOUTH:
-                    path[0] = 2;
-                    path[1] = 3;
+                    path[0] = 1;
+                    path[1] = 2;
                 case WEST:
-                    path[0] = 2;
+                    path[0] = 1;
                 default:
                     printf("NORTH\n");
             }
         case EAST:
             switch (out_dir) {
                 case NORTH:
-                    path[0] = 1;
+                    path[0] = 0;
                 case EAST:
-                    path[0] = 1;
-                    path[1] = 2;
-                    path[2] = 3;
-                    path[3] = 4;
+                    path[0] = 0;
+                    path[1] = 1;
+                    path[2] = 2;
+                    path[3] = 3;
                 case SOUTH:
-                    path[0] = 1;
-                    path[1] = 2;
-                    path[2] = 3;
+                    path[0] = 0;
+                    path[1] = 1;
+                    path[2] = 2;
                 case WEST:
-                    path[0] = 1;
-                    path[1] = 2;
+                    path[0] = 0;
+                    path[1] = 1;
                 default:
                     printf("EAST\n");
             }
         case SOUTH:
             switch (out_dir) {
                 case NORTH:
-                    path[0] = 1;
-                    path[1] = 4;
+                    path[0] = 0;
+                    path[1] = 3;
                 case EAST:
-                    path[0] = 4;
+                    path[0] = 3;
                 case SOUTH:
-                    path[0] = 1;
-                    path[1] = 2;
-                    path[2] = 3;
-                    path[3] = 4;
+                    path[0] = 0;
+                    path[1] = 1;
+                    path[2] = 2;
+                    path[3] = 3;
                 case WEST:
-                    path[0] = 1;
-                    path[1] = 2;
-                    path[2] = 4;
+                    path[0] = 0;
+                    path[1] = 1;
+                    path[2] = 3;
                 default:
                     printf("SOUTH\n");
             }
         case WEST:
             switch (out_dir) {
                 case NORTH:
-                    path[0] = 1;
-                    path[1] = 3;
-                    path[2] = 4;
-                case EAST:
-                    path[0] = 3;
-                    path[1] = 4;
-                case SOUTH:
-                    path[0] = 3;
-                case WEST:
-                    path[0] = 1;
+                    path[0] = 0;
                     path[1] = 2;
                     path[2] = 3;
-                    path[3] = 4;
+                case EAST:
+                    path[0] = 2;
+                    path[1] = 3;
+                case SOUTH:
+                    path[0] = 2;
+                case WEST:
+                    path[0] = 0;
+                    path[1] = 1;
+                    path[2] = 2;
+                    path[3] = 3;
                 default:
                     printf("WEST\n");
             }
