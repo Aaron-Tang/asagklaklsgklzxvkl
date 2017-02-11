@@ -149,7 +149,7 @@ void *car_arrive(void *arg) {
     // might be broadcast
     pthread_mutex_unlock(&l->lock);
 
-    PrintLane(l, "Test");
+    //PrintLane(l, "Test");
     return NULL;
 }
 
