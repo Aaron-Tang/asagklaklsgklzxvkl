@@ -202,18 +202,17 @@ void *car_cross(void *arg) {
             pthread_mutex_lock(&isection.quad[path[i]]);
         }
 
-        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, cur_car->out_dir, cur_car->in_dir);
-
         // adds cur_car to out_cars in exit lane
 
 
         exit_lane = &isection.lanes[cur_car->out_dir];
+        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, cur_car->out_dir, cur_car->in_dir);
 
-  //      pthread_mutex_lock(&exit_lane->lock);
+        pthread_mutex_lock(&exit_lane->lock);
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
-//        pthread_mutex_unlock(&exit_lane->lock);
+        pthread_mutex_unlock(&exit_lane->lock);
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
