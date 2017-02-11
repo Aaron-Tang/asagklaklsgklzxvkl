@@ -177,8 +177,10 @@ void *car_arrive(void *arg) {
  */
 void *car_cross(void *arg) {
     struct lane *l = arg;
+    struct lane *exit_lane;
+    pthread_mutex_lock(&l->lock);
+
     while (l->inc > 0){
-        pthread_mutex_lock(&l->lock);
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
@@ -202,7 +204,7 @@ void *car_cross(void *arg) {
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, cur_car->out_dir, cur_car->in_dir);
 
         // adds cur_car to out_cars in exit lane
-        struct lane *exit_lane;
+
 
         exit_lane = &isection.lanes[cur_car->out_dir];
 
@@ -222,10 +224,10 @@ void *car_cross(void *arg) {
         l->inc--;
 
         pthread_cond_signal(&l->producer_cv);
-        pthread_mutex_unlock(&l->lock);
         free(path);
 
     }
+    pthread_mutex_unlock(&l->lock);
     return NULL;
 }
 
