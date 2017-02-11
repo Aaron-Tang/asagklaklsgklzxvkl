@@ -117,6 +117,7 @@ void *car_arrive(void *arg) {
         l->tail++;
         l->in_buf++;
         pthread_cond_signal(&l->consumer_cv);
+        printf("%d\n", l->buffer[l->tail - 1].id);
     }
 
     // might be broadcast
