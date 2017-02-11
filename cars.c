@@ -132,10 +132,14 @@ void *car_arrive(void *arg) {
     pthread_mutex_lock(&l->lock);
 
     struct car* pCar = l->in_cars;
+    struct car* temp;
+
     while (pCar != NULL) {
         while(l->in_buf == l->capacity) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
+        temp =  = pCar->next;
+        pCar->next = NULL;
         l->buffer[l->tail] = pCar;
         if (l->tail == l->capacity - 1)
             l->tail = 0;
@@ -144,7 +148,7 @@ void *car_arrive(void *arg) {
  
         pthread_cond_signal(&l->consumer_cv);
  
-        pCar = pCar->next;
+        pCar = temp;
     }
     // might be broadcast
     pthread_mutex_unlock(&l->lock);
@@ -177,7 +181,6 @@ void *car_arrive(void *arg) {
  */
 void *car_cross(void *arg) {
     struct lane *l = arg;
-    PrintLane(l, "Lane");
     struct lane *exit_lane;
     int *path;
     pthread_mutex_lock(&l->lock);
