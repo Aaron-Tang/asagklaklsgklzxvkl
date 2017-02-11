@@ -155,8 +155,9 @@ void *car_cross(void *arg) {
     }
 
     // need to update new head
+    printf("HEAD: %d, Car: %d\n", l->head, l->buffer[l->head]->id);
     struct car *cur_car = l->buffer[l->head];
-
+ 
     if (l->head == l->capacity - 1)
         l->head = 0;
     l->head += 1;
