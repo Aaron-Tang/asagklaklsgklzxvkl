@@ -96,7 +96,7 @@ void init_intersection() {
         // create a new lane
         struct lane* new_lane;
         new_lane = malloc(sizeof(struct lane));
-        //memset(new_lane, 0, sizeof(struct lane));
+        memset(new_lane, 0, sizeof(struct lane));
 
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
