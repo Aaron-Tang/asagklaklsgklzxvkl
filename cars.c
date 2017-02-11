@@ -136,6 +136,7 @@ void *car_arrive(void *arg) {
         while(l->in_buf == l->capacity) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
+
         temp = pCar->next;
         pCar->next = NULL;
         l->buffer[l->tail] = pCar;
@@ -212,7 +213,7 @@ void *car_cross(void *arg) {
         exit_lane = &isection.lanes[cur_car->out_dir];
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
             cur_car->out_dir, cur_car->in_dir);
-
+        printf("Exit Lane Car value: %d\n", exit_lane->out_cars->id);
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
