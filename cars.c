@@ -177,6 +177,7 @@ void *car_arrive(void *arg) {
  */
 void *car_cross(void *arg) {
     struct lane *l = arg;
+    PrintLane(l, "Lane");
     struct lane *exit_lane;
     int *path;
     pthread_mutex_lock(&l->lock);
