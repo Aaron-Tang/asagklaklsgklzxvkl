@@ -157,16 +157,13 @@ void *car_cross(void *arg) {
     // need to update new head
     struct car *cur_car = l->buffer[l->head];
 
-    // printf("ID: %d || out_dir: %d || in_dir: %d", cur_car->id, cur_car->out_dir, cur_car->in_dir);
-    //printf("ID: %d", cur_car->id);
-
     if (l->head == l->capacity - 1)
         l->head = 0;
-    l->head++;
+    l->head += 1;
 
 
     // Decrements in_buf because cur_car has left buffer
-    l->in_buf--;
+    l->in_buf -= 1;
 
     int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
     int i;
