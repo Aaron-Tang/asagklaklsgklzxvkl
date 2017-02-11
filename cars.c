@@ -76,8 +76,8 @@ void init_intersection() {
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
         new_lane->consumer_cv = cons_cv;
-        new_lane->in_cars = NULL;
-        new_lane->out_cars = NULL;
+        // new_lane->in_cars = NULL;
+        // new_lane->out_cars = NULL;
         new_lane->inc = 0;
         new_lane->passed = 0;
         new_lane->head = 0;
