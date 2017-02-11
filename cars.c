@@ -178,6 +178,7 @@ void *car_arrive(void *arg) {
 void *car_cross(void *arg) {
     struct lane *l = arg;
     struct lane *exit_lane;
+    int *path;
     pthread_mutex_lock(&l->lock);
 
     while (l->inc > 0){
@@ -187,6 +188,7 @@ void *car_cross(void *arg) {
 
         // need to update new head
         struct car *cur_car = l->buffer[l->head];
+        path = compute_path(cur_car->in_dir, cur_car->out_dir);
         cur_car->next = NULL;
         printf("HEAD: %d, Car: %d\n", l->head, l->buffer[l->head]->id);
 
@@ -196,7 +198,6 @@ void *car_cross(void *arg) {
 
 
 
-        int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
         int i;
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_lock(&isection.quad[path[i]]);
@@ -224,9 +225,9 @@ void *car_cross(void *arg) {
         l->inc--;
 
         pthread_cond_signal(&l->producer_cv);
-        free(path);
 
     }
+    free(path);
     pthread_mutex_unlock(&l->lock);
     return NULL;
 }
