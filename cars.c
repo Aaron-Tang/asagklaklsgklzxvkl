@@ -218,7 +218,6 @@ void *car_cross(void *arg) {
             cur_car->out_dir, cur_car->in_dir);
 
         cur_car->next = exit_lane->out_cars;
-        exit_lane->out_cars = cur_car;
         exit_lane->passed++;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
