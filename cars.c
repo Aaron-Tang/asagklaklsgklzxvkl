@@ -210,13 +210,13 @@ void *car_cross(void *arg) {
 
 
         exit_lane = &isection.lanes[cur_car->out_dir];
-        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, cur_car->out_dir, cur_car->in_dir);
+        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
+            cur_car->out_dir, cur_car->in_dir);
 
         pthread_mutex_lock(&exit_lane->lock);
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
-        printf("HERE\n");
         pthread_mutex_unlock(&exit_lane->lock);
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
@@ -252,78 +252,97 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
+                    break;
                 case EAST:
                     path[0] = 1;
                     path[1] = 2;
                     path[2] = 3;
+                    break;
                 case SOUTH:
                     path[0] = 1;
                     path[1] = 2;
+                    break;
                 case WEST:
                     path[0] = 1;
+                    break;
                 default:
                     break;
             }
+            break;
         case EAST:
             switch (out_dir) {
                 case NORTH:
                     path[0] = 0;
+                    break;
                 case EAST:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
+                    break;
                 case SOUTH:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
+                    break;
                 case WEST:
                     path[0] = 0;
                     path[1] = 1;
+                    break;
                 default:
                     break;
             }
+            break;
         case SOUTH:
             switch (out_dir) {
                 case NORTH:
                     path[0] = 0;
                     path[1] = 3;
+                    break;
                 case EAST:
                     path[0] = 3;
+                    break;
                 case SOUTH:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
+                    break;
                 case WEST:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 3;
+                    break;
                 default:
                     break;
             }
+            break;
         case WEST:
             switch (out_dir) {
                 case NORTH:
                     path[0] = 0;
                     path[1] = 2;
                     path[2] = 3;
+                    break;
                 case EAST:
                     path[0] = 2;
                     path[1] = 3;
+                    break;
                 case SOUTH:
                     path[0] = 2;
+                    break;
                 case WEST:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
+                    break;
                 default:
                     break;
             }
+            break;
         default:
             break;
     }
-
     return path;
 }
