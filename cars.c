@@ -151,7 +151,6 @@ void *car_arrive(void *arg) {
     // might be broadcast
     pthread_mutex_unlock(&l->lock);
 
-    //PrintLane(l, "Test");
     return NULL;
 }
 
@@ -192,7 +191,6 @@ void *car_cross(void *arg) {
         struct car *cur_car = l->buffer[l->head];
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
         cur_car->next = NULL;
-        printf("HEAD: %d, Car: %d\n", l->head, l->buffer[l->head]->id);
 
         if (l->head == l->capacity - 1)
             l->head = 0;
@@ -216,6 +214,7 @@ void *car_cross(void *arg) {
             cur_car->out_dir, cur_car->in_dir);
 
         cur_car->next = exit_lane->out_cars;
+        exit_lane->out_cars = cur_car;
         exit_lane->passed++;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
