@@ -112,13 +112,11 @@ void *car_arrive(void *arg) {
         }
         l->in_cars[i].next = NULL;
         l->buffer[l->tail] = &l->in_cars[i];
-        printf("Added a car\n");
         if (l->tail == l->capacity - 1)
             l->tail = 0;
         l->tail++;
         l->in_buf++;
         pthread_cond_signal(&l->consumer_cv);
-
     }
 
     // might be broadcast
