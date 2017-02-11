@@ -179,9 +179,10 @@ void *car_arrive(void *arg) {
  */
 void *car_cross(void *arg) {
     struct lane *l = arg;
+    pthread_mutex_lock(&l->lock);
+    struct car *cur_car;
     struct lane *exit_lane;
     int *path;
-    pthread_mutex_lock(&l->lock);
 
     while (l->inc > 0){
         while(l->in_buf == 0) {
@@ -189,7 +190,8 @@ void *car_cross(void *arg) {
         }   
 
         // need to update new head
-        struct car *cur_car = l->buffer[l->head];
+        cur_car = l->buffer[l->head];
+        l->buffer[l->head] = NULL;
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
         cur_car->next = NULL;
 
