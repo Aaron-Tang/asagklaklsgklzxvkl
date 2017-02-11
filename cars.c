@@ -183,7 +183,7 @@ void *car_cross(void *arg) {
     int *path;
     pthread_mutex_lock(&l->lock);
 
-    //while (l->inc > 0){
+    while (l->inc > 0){
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
@@ -226,7 +226,7 @@ void *car_cross(void *arg) {
 
         pthread_cond_signal(&l->producer_cv);
 
-    //}
+    }
     free(path);
     pthread_mutex_unlock(&l->lock);
     return NULL;
