@@ -149,7 +149,7 @@ void *car_arrive(void *arg) {
     // might be broadcast
     pthread_mutex_unlock(&l->lock);
 
-    //PrintLane(l, "Test");
+    PrintLane(l, "Test");
     return NULL;
 }
 
@@ -176,50 +176,49 @@ void *car_arrive(void *arg) {
  * before submitting your final code. 
  */
 void *car_cross(void *arg) {
-    struct lane *l = arg;
-    int k;
-    pthread_mutex_lock(&l->lock);
-    while(l->buffer[l->head] != NULL){
-        while(l->in_buf == 0) {
-            pthread_cond_wait(&l->consumer_cv, &l->lock);
-        }   
+    // struct lane *l = arg;
+    // pthread_mutex_lock(&l->lock);
+    // while(l->buffer[l->head] != NULL){
+    //     while(l->in_buf == 0) {
+    //         pthread_cond_wait(&l->consumer_cv, &l->lock);
+    //     }   
 
-        // need to update new head
-        struct car *cur_car = l->buffer[l->head];
-        printf("HEAD: %d, Car: %d\n", l->head, l->buffer[l->head]->id);
-
-
-        if (l->head == l->capacity - 1)
-            l->head = 0;
-        l->head += 1;
+    //     // need to update new head
+    //     struct car *cur_car = l->buffer[l->head];
+    //     printf("HEAD: %d, Car: %d\n", l->head, l->buffer[l->head]->id);
 
 
-        // Decrements in_buf because cur_car has left buffer
-        l->in_buf -= 1;
+    //     if (l->head == l->capacity - 1)
+    //         l->head = 0;
+    //     l->head += 1;
 
-        int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
-        int i;
-        for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
-            pthread_mutex_lock(&isection.quad[path[i]]);
-        }
 
-        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, cur_car->out_dir, cur_car->in_dir);
+    //     // Decrements in_buf because cur_car has left buffer
+    //     l->in_buf -= 1;
 
-        // adds cur_car to out_cars in exit lane
-        struct lane *exit_lane;
+    //     int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
+    //     int i;
+    //     for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+    //         pthread_mutex_lock(&isection.quad[path[i]]);
+    //     }
 
-        exit_lane = &isection.lanes[cur_car->out_dir];
-        cur_car->next = exit_lane->out_cars;
-        exit_lane->out_cars = cur_car;
-        exit_lane->passed++;
+    //     printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, cur_car->out_dir, cur_car->in_dir);
 
-        for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
-            pthread_mutex_unlock(&isection.quad[path[i]]);
-        }
-        pthread_cond_signal(&l->producer_cv);
-        free(path);
-    }
-    pthread_mutex_unlock(&l->lock);
+    //     // adds cur_car to out_cars in exit lane
+    //     struct lane *exit_lane;
+
+    //     exit_lane = &isection.lanes[cur_car->out_dir];
+    //     cur_car->next = exit_lane->out_cars;
+    //     exit_lane->out_cars = cur_car;
+    //     exit_lane->passed++;
+
+    //     for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+    //         pthread_mutex_unlock(&isection.quad[path[i]]);
+    //     }
+    //     pthread_cond_signal(&l->producer_cv);
+    //     free(path);
+    // }
+    // pthread_mutex_unlock(&l->lock);
     return NULL;
 }
 
