@@ -104,41 +104,20 @@ void init_intersection() {
 void *car_arrive(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
-
-
-    while(l->in_buf == l->capacity) {
-        pthread_cond_wait(&l->producer_cv, &l->lock);
-    }
-
-    if (l->in_cars == NULL) {
-        pthread_mutex_unlock(&l->lock);
-        return NULL;
-    }
-    struct car *next_up = l->in_cars;
-    l->in_cars = next_up->next;
-
-    if (l->in_buf != 0) {
-        struct car *head = l->buffer[l->head];
-        struct car *tail = l->buffer[l->tail];
-        next_up->next = head;
-        tail->next = next_up;
-    }
-    else{
-        next_up->next = next_up;
-    }
-
-
     int i;
-    for (i = 0; i < l->capacity; i++) {
-        if (l->buffer[i] == NULL) {
-            l->buffer[i] = next_up;
-            l->tail = i;
-            l->in_buf += 1;
-            break;
+
+    for (i = 0; i < l->inc; i++){
+        while(l->in_buf == l->capacity) {
+            pthread_cond_wait(&l->producer_cv, &l->lock);
         }
+        l->in_cars[i].next = NULL;
+        l->buffer[tail] = l->in_cars[i];
+        l->tail++;
+        l->in_buf++;
+        pthread_cond_signal(&l->consumer_cv);
     }
+
     // might be broadcast
-    pthread_cond_signal(&l->consumer_cv);
     pthread_mutex_unlock(&l->lock);
     return NULL;
 }
