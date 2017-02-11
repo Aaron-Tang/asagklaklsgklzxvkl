@@ -114,8 +114,8 @@ void *car_arrive(void *arg) {
         l->buffer[l->tail] = &l->in_cars[i];
         if (l->tail == l->capacity - 1)
             l->tail = 0;
-        l->tail++;
-        l->in_buf++;
+        l->tail += 1;
+        l->in_buf += 1;
         pthread_cond_signal(&l->consumer_cv);
     }
 
