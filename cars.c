@@ -107,6 +107,7 @@ void *car_arrive(void *arg) {
     int i;
 
     for (i = 0; i < l->inc; i++){
+        printf("Iteration: %d\n", i);
         while(l->in_buf == l->capacity) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
