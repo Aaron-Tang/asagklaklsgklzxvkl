@@ -112,6 +112,8 @@ void *car_arrive(void *arg) {
         }
         l->in_cars[i].next = NULL;
         l->buffer[l->tail] = &l->in_cars[i];
+        if (l->tail == l->capacity - 1)
+            l->tail = 0;
         l->tail++;
         l->in_buf++;
         pthread_cond_signal(&l->consumer_cv);
@@ -155,29 +157,16 @@ void *car_cross(void *arg) {
     // need to update new head
     struct car *cur_car = l->buffer[l->head];
 
-    if (!cur_car) {
-        pthread_mutex_unlock(&l->lock);
-        return NULL;
-    }
-
     // printf("ID: %d || out_dir: %d || in_dir: %d", cur_car->id, cur_car->out_dir, cur_car->in_dir);
-    printf("ID: %d", cur_car->id);
+    //printf("ID: %d", cur_car->id);
 
+    if (l->head == l->capacity - 1)
+        l->head = 0;
+    l->head++;
 
-    struct car *new_head = cur_car->next;
-    struct car *tail = l->buffer[l->tail];
-    tail->next = new_head;
-
-    int k;
-    for (k = 0; k < l->capacity; k++) {
-        if (l->buffer[k]->id == new_head->id) {
-            l->head = k;
-            break;
-        }
-    }
 
     // Decrements in_buf because cur_car has left buffer
-    l->in_buf -= 1;
+    l->in_buf--;
 
     int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
     int i;
@@ -213,7 +202,7 @@ void *car_cross(void *arg) {
  * 
  */
 int *compute_path(enum direction in_dir, enum direction out_dir) {
-    int *path = malloc(3 * sizeof(int));
+    int *path = malloc(4 * sizeof(int));
 
     // OFFICE HOURS QUESTIONS: HOW TO U-TURN
     switch (in_dir) {
@@ -222,6 +211,8 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                 case NORTH:
                     path[0] = 1;
                     path[1] = 2;
+                    path[2] = 3;
+                    path[3] = 4;
                 case EAST:
                     path[0] = 2;
                     path[1] = 3;
@@ -240,7 +231,9 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[0] = 1;
                 case EAST:
                     path[0] = 1;
-                    path[1] = 4;
+                    path[1] = 2;
+                    path[2] = 3;
+                    path[3] = 4;
                 case SOUTH:
                     path[0] = 1;
                     path[1] = 2;
@@ -259,8 +252,10 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                 case EAST:
                     path[0] = 4;
                 case SOUTH:
-                    path[0] = 3;
-                    path[1] = 4;
+                    path[0] = 1;
+                    path[1] = 2;
+                    path[2] = 3;
+                    path[3] = 4;
                 case WEST:
                     path[0] = 1;
                     path[1] = 2;
@@ -280,8 +275,10 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                 case SOUTH:
                     path[0] = 3;
                 case WEST:
-                    path[0] = 2;
-                    path[1] = 3;
+                    path[0] = 1;
+                    path[1] = 2;
+                    path[2] = 3;
+                    path[3] = 4;
                 default:
                     printf("WEST\n");
             }
