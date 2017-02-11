@@ -184,10 +184,12 @@ void *car_cross(void *arg) {
     for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
         pthread_mutex_unlock(&isection.quad[path[i]]);
     }
+    printf("Before Signal\n");
+    pthread_cond_signal(&l->producer_cv);
+    printf("After Signal\n");
+    pthread_mutex_unlock(&l->lock);
 
     free(path);
-    pthread_cond_signal(&l->producer_cv);
-    pthread_mutex_unlock(&l->lock);
     return NULL;
 }
 
