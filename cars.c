@@ -48,8 +48,6 @@ void parse_schedule(char *file_name) {
     /* parse file */
     while (fscanf(f, "%d %d %d", &id, (int*)&in_dir, (int*)&out_dir) == 3) {
 
-       // printf("Id: %d, In: %d, Out: %d\n", id, in_dir, out_dir);
-
         /* construct car */
         cur_car = malloc(sizeof(struct car));
         cur_car->id = id;
@@ -138,7 +136,7 @@ void *car_arrive(void *arg) {
         while(l->in_buf == l->capacity) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
-        temp =  = pCar->next;
+        temp = pCar->next;
         pCar->next = NULL;
         l->buffer[l->tail] = pCar;
         if (l->tail == l->capacity - 1)
@@ -253,95 +251,75 @@ int *compute_path(enum direction in_dir, enum direction out_dir) {
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
-                    break;
                 case EAST:
                     path[0] = 1;
                     path[1] = 2;
                     path[2] = 3;
-                    break;
                 case SOUTH:
                     path[0] = 1;
                     path[1] = 2;
-                    break;
                 case WEST:
                     path[0] = 1;
-                    break;
                 default:
                     break;
             }
-            break;
         case EAST:
             switch (out_dir) {
                 case NORTH:
                     path[0] = 0;
-                    break;
                 case EAST:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
-                    break;
                 case SOUTH:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
-                    break;
                 case WEST:
                     path[0] = 0;
                     path[1] = 1;
-                    break;
                 default:
                     break;
             }
-            break;
         case SOUTH:
             switch (out_dir) {
                 case NORTH:
                     path[0] = 0;
                     path[1] = 3;
-                    break;
                 case EAST:
                     path[0] = 3;
-                    break;
                 case SOUTH:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
-                    break;
                 case WEST:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 3;
-                    break;
                 default:
                     break;
             }
-            break;
         case WEST:
             switch (out_dir) {
                 case NORTH:
                     path[0] = 0;
                     path[1] = 2;
                     path[2] = 3;
-                    break;
                 case EAST:
                     path[0] = 2;
                     path[1] = 3;
-                    break;
                 case SOUTH:
                     path[0] = 2;
-                    break;
                 case WEST:
                     path[0] = 0;
                     path[1] = 1;
                     path[2] = 2;
                     path[3] = 3;
-                    break;
                 default:
                     break;
             }
-            break;
         default:
             break;
     }
