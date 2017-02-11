@@ -187,7 +187,14 @@ void *car_cross(void *arg) {
         struct car *cur_car = l->buffer[l->head];
         printf("HEAD: %d, Car: %d\n", l->head, l->buffer[l->head]->id);
 
+        if (l->head == l->capacity - 1)
+            l->head = 0;
+        l->head += 1;
+
         // Decrements in_buf because cur_car has left buffer
+        l->in_buf -= 1;
+
+        l->inc--;
 
         int *path = compute_path(cur_car->in_dir, cur_car->out_dir);
         int i;
@@ -210,15 +217,11 @@ void *car_cross(void *arg) {
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
-        if (l->head == l->capacity - 1)
-            l->head = 0;
-        l->head += 1;
 
-        l->in_buf -= 1;
         pthread_cond_signal(&l->producer_cv);
-        free(path);
-        l->inc--;
         pthread_mutex_unlock(&l->lock);
+        free(path);
+
     }
     return NULL;
 }
