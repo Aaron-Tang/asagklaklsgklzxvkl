@@ -96,7 +96,7 @@ void init_intersection() {
         // create a new lane
         struct lane* new_lane;
         new_lane = malloc(sizeof(struct lane));
-        memset(new_lane, 0, sizeof(struct lane));
+        //memset(new_lane, 0, sizeof(struct lane));
 
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
@@ -195,6 +195,9 @@ void *car_cross(void *arg) {
         if (l->head == l->capacity - 1)
             l->head = 0;
         l->head += 1;
+        l->in_buf -= 1;
+
+        l->inc-= 1;
 
 
 
@@ -213,6 +216,7 @@ void *car_cross(void *arg) {
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
+        printf("HERE\n");
         pthread_mutex_unlock(&exit_lane->lock);
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
@@ -220,9 +224,6 @@ void *car_cross(void *arg) {
         }
 
         // Decrements in_buf because cur_car has left buffer
-        l->in_buf -= 1;
-
-        l->inc--;
 
         pthread_cond_signal(&l->producer_cv);
 
