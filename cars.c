@@ -111,6 +111,7 @@ void *car_arrive(void *arg) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
         l->in_cars[i].next = NULL;
+        printf("Tail %d\n", l->tail);
         l->buffer[l->tail] = &l->in_cars[i];
         if (l->tail == l->capacity - 1)
             l->tail = 0;
