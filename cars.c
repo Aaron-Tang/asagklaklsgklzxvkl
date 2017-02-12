@@ -197,25 +197,27 @@ void *car_cross(void *arg) {
     struct lane *l = arg;
     
     while(1) {
-        pthread_mutex_lock(&l->lock);
-        printf("locked car cross lane: %d\n", l->id);
-
         int *path;
-        int k;
+        int i, k;
 
         for (k = l->inc; k > 0; k--) {
+
+            pthread_mutex_lock(&l->lock);
+            printf("locked car cross lane: %d\n", l->id);
+
+
             while(l->in_buf == 0) {
                 pthread_cond_wait(&l->consumer_cv, &l->lock);
             }   
 
             // BETWEEN HERE
             struct car *cur_car = l->buffer[l->head];
-            //printf("Current Car: %d\n", l->buffer[l->head]->id);
-            //printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
             
             l->head += 1;
             if (l->head == l->capacity)
                 l->head = 0;
+
+            l->in_buf -= 1;
 
             pthread_mutex_unlock(&l->lock);
 
@@ -224,11 +226,11 @@ void *car_cross(void *arg) {
 
             path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
-            /*
+
             for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
                 pthread_mutex_lock(&isection.quad[path[i]]);
             }
-            */
+
             struct lane* exit_lane = &isection.lanes[cur_car->out_dir];
             printf("trying to lock exit lane: %d\n", cur_car->out_dir);
             pthread_mutex_lock(&exit_lane->lock);
@@ -237,14 +239,13 @@ void *car_cross(void *arg) {
             exit_lane->out_cars = cur_car;
             exit_lane->passed++;
             
-            l->in_buf -= 1;
             pthread_mutex_unlock(&exit_lane->lock);
             pthread_cond_signal(&l->producer_cv);
-            /*    
+ 
             for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
                 pthread_mutex_unlock(&isection.quad[path[i]]);
             }
-            */
+
             free(path);
         }
         pthread_mutex_unlock(&l->lock);
