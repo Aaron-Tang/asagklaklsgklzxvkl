@@ -177,9 +177,10 @@ void *car_arrive(void *arg) {
 void *car_cross(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
-    struct car *cur_car;
+    struct car *cur_car = l->buffer[l->head];
     struct lane *exit_lane;
     int *path;
+    int i;
 
     while (l->inc > 0){
         while(l->in_buf == 0) {
@@ -187,21 +188,15 @@ void *car_cross(void *arg) {
         }   
 
         // need to update new head
-        cur_car = l->buffer[l->head];
         //l->buffer[l->head] = NULL;
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
-        cur_car->next = NULL;
+        //cur_car->next = NULL;
 
         if (l->head == l->capacity - 1)
             l->head = 0;
         l->head += 1;
         l->in_buf -= 1;
 
-        l->inc-= 1;
-
-
-
-        int i;
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_lock(&isection.quad[path[i]]);
         }
@@ -222,9 +217,10 @@ void *car_cross(void *arg) {
         }
 
         // Decrements in_buf because cur_car has left buffer
+        l->inc -= 1;
+        cur_car = l->buffer[l->head];
 
         pthread_cond_signal(&l->producer_cv);
-
     }
     free(path);
     pthread_mutex_unlock(&l->lock);
