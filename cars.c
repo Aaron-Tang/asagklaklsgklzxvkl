@@ -141,7 +141,7 @@ void *car_arrive(void *arg) {
             break;
         }
 
-        while (l->in_cars != NULL) {
+        if (l->in_cars != NULL) {
             while(l->in_buf == l->capacity) {
                 pthread_cond_wait(&l->producer_cv, &l->lock);
             }
@@ -160,13 +160,18 @@ void *car_arrive(void *arg) {
             pthread_mutex_unlock(&l->lock);
             pthread_cond_signal(&l->consumer_cv);
             printf("loop\n");
-            
-
-            break;    
+           
+        }
+        else
+        {
+            pthread_mutex_unlock(&l->lock);
+            pthread_cond_signal(&l->consumer_cv);
+            break;
         }
     }
     // might be broadcast
     //PrintLane(l, "TEST");
+    printf("Exited car_arrive lane: %d\n", l->id);
     
     return NULL;
 }
