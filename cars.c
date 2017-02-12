@@ -131,7 +131,7 @@ void *car_arrive(void *arg) {
 
     struct car* pCar = l->in_cars;
 
-    while (l->inc > 0) {
+    while (pCar != NULL) {
         while(l->in_buf == l->capacity) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
@@ -141,11 +141,10 @@ void *car_arrive(void *arg) {
             l->tail = 0;
         l->tail += 1;
         l->in_buf += 1;
-        PrintLane(l, "HERE");
+ 
         pthread_cond_signal(&l->consumer_cv);
  
         pCar = pCar->next;
-        l->inc--;
     }
     // might be broadcast
     //PrintLane(l, "TEST");
@@ -184,8 +183,9 @@ void *car_cross(void *arg) {
 
     int *path;
     int i;
+    int counter = l->inc;
 
-    while (l->inc > 0){
+    while (counter > 0){
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
@@ -199,7 +199,7 @@ void *car_cross(void *arg) {
             l->head = 0;
         l->head += 1;
         l->in_buf -= 1;
-        l->inc -= 1;
+        counter -= 1;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_lock(&isection.quad[path[i]]);
