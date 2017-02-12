@@ -28,6 +28,7 @@ struct car {
 
 /* entry lane feeding into the intersection */
 struct lane {
+    int id;
     /* synchronization */
     pthread_mutex_t lock;
     pthread_cond_t  producer_cv, consumer_cv;
