@@ -155,9 +155,9 @@ void *car_arrive(void *arg) {
 
             l->in_buf += 1;
    
-            pCar = pCar->next;
-            l->in_cars = pCar->next;
-            
+            //pCar = pCar->next;
+            l->in_cars = l->in_cars->next;
+
             pthread_mutex_unlock(&l->lock);
             pthread_cond_signal(&l->consumer_cv);
             
