@@ -177,8 +177,7 @@ void *car_arrive(void *arg) {
 void *car_cross(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
-    struct car *cur_car = malloc(sizeof(struct car));
-    cur_car = l->buffer[l->head];
+
     struct lane * exit_lane;
     int *path;
     int i;
@@ -187,6 +186,9 @@ void *car_cross(void *arg) {
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
+
+        struct car *cur_car = malloc(sizeof(struct car));
+        cur_car = l->buffer[l->head];
 
         // need to update new head
         //l->buffer[l->head] = NULL;
@@ -220,7 +222,6 @@ void *car_cross(void *arg) {
 
         // Decrements in_buf because cur_car has left buffer
         l->inc -= 1;
-        cur_car = l->buffer[l->head];
 
         pthread_cond_signal(&l->producer_cv);
     }
