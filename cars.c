@@ -190,14 +190,13 @@ void *car_cross(void *arg) {
 
     for (k = l->inc; k > 0; k--){
         while(l->in_buf == 0) {
-            printf("HERE\n");
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
 
         // BETWEEN HERE
         struct car *cur_car = l->buffer[l->head];
-        printf("Current Car: %d\n", l->buffer[l->head]->id);
-        printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
+        //printf("Current Car: %d\n", l->buffer[l->head]->id);
+        //printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
         
         l->head += 1;
         if (l->head == l->capacity)
