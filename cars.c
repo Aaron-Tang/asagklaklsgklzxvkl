@@ -177,7 +177,8 @@ void *car_arrive(void *arg) {
 void *car_cross(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
-    struct car *cur_car = l->buffer[l->head];
+    struct car *cur_car = malloc(sizeof(struct car));
+    cur_car = l->buffer[l->head];
     struct lane * exit_lane;
     int *path;
     int i;
