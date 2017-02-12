@@ -174,6 +174,8 @@ void *car_arrive(void *arg) {
  * make sure to clear any prints other than the one specified above, 
  * before submitting your final code. 
  */
+
+// SOMETHING IN HERE IS WRONG
 void *car_cross(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
@@ -205,15 +207,17 @@ void *car_cross(void *arg) {
 
         // adds cur_car to out_cars in exit lane
 
-
+        // PROBABLY IN THIS AREA
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
             cur_car->out_dir, cur_car->in_dir);
 
         exit_lane = &isection.lanes[cur_car->out_dir];
-        cur_car->next = NULL;
+        //cur_car->next = NULL;
+        pthread_mutex_lock(&exit_lane->lock);
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
+        pthread_mutex_unlock(&exit_lane->lock);
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
