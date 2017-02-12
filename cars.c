@@ -139,7 +139,7 @@ void *car_arrive(void *arg) {
         }
 
         l->buffer[l->tail] = pCar;
-        l->buffer[l->tail]->next = NULL;
+
         if (l->tail == l->capacity - 1)
             l->tail = 0;
         l->tail += 1;
@@ -148,6 +148,7 @@ void *car_arrive(void *arg) {
         pthread_cond_signal(&l->consumer_cv);
  
         pCar = pCar->next;
+        l->buffer[l->tail]->next = NULL;
     }
     // might be broadcast
     //PrintLane(l, "TEST");
