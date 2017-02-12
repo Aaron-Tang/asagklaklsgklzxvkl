@@ -183,15 +183,14 @@ void *car_cross(void *arg) {
 
     int *path;
     int i;
-    int counter = l->inc;
 
-    while (counter > 0){
+    while (l->inc > 0){
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
 
         struct car *cur_car = l->buffer[l->head];
-        printf("Current Car: %d\n", cur_car->id);
+        printf("Next Car: %d\n", cur_car->next->id);
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
 
@@ -199,15 +198,14 @@ void *car_cross(void *arg) {
             l->head = 0;
         l->head += 1;
         l->in_buf -= 1;
-        counter -= 1;
+        l->inc -= 1;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_lock(&isection.quad[path[i]]);
         }
 
-        // PROBABLY IN THIS AREA
-        //printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
-        //    cur_car->out_dir, cur_car->in_dir);
+        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
+           cur_car->out_dir, cur_car->in_dir);
 
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
