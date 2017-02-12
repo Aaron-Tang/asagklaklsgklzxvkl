@@ -217,6 +217,8 @@ void *car_cross(void *arg) {
             // if (l->head == l->capacity)
             //     l->head = 0;
 
+            pthread_mutex_unlock(&l->lock);
+
             printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
                cur_car->out_dir, cur_car->in_dir);
 
