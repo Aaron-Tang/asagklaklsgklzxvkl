@@ -235,6 +235,10 @@ void *car_cross(void *arg) {
             pthread_mutex_lock(&exit_lane->lock);
             printf("locked exit lane: %d\n", cur_car->out_dir);
 
+            if (!exit_lane->out_cars)
+                printf("exit_lane->out_cars is null\n");
+
+
             cur_car->next = exit_lane->out_cars;
             exit_lane->out_cars = cur_car;
             exit_lane->passed++;
