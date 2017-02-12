@@ -148,7 +148,7 @@ void *car_arrive(void *arg) {
         pthread_cond_signal(&l->consumer_cv);
  
         pCar = pCar->next;
-        l->buffer[l->tail]->next = NULL;
+        //l->buffer[l->tail]->next = NULL;
     }
     // might be broadcast
     //PrintLane(l, "TEST");
@@ -218,8 +218,10 @@ void *car_cross(void *arg) {
 
         //pthread_mutex_lock(&exit_lane->lock);
         //cur_car->next = exit_lane->out_cars;
+        if (exit_lane->out_cars == NULL)
+            exit_lane->out_cars = cur_car;
+        exit_lane->out_cars->next = cur_car;
         exit_lane->out_cars = cur_car;
-
         //pthread_mutex_unlock(&exit_lane->lock);
 
         exit_lane->passed++;
@@ -227,7 +229,7 @@ void *car_cross(void *arg) {
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
-        
+
         l->in_buf -= 1;
         pthread_cond_signal(&l->producer_cv);
 
