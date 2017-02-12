@@ -190,6 +190,7 @@ void *car_cross(void *arg) {
 
     for (k = l->inc; k > 0; k--){
         while(l->in_buf == 0) {
+            printf("HERE\n");
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
 
