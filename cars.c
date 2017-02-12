@@ -200,11 +200,10 @@ void *car_cross(void *arg) {
         int *path;
         int i, k;
 
+        pthread_mutex_lock(&l->lock);
+        printf("locked car cross lane: %d\n", l->id);
+
         for (k = l->inc; k > 0; k--) {
-
-            pthread_mutex_lock(&l->lock);
-            printf("locked car cross lane: %d\n", l->id);
-
 
             while(l->in_buf == 0) {
                 pthread_cond_wait(&l->consumer_cv, &l->lock);
@@ -220,12 +219,12 @@ void *car_cross(void *arg) {
             l->in_buf -= 1;
 
             pthread_mutex_unlock(&l->lock);
+            pthread_cond_signal(&l->producer_cv);
 
             printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
                cur_car->out_dir, cur_car->in_dir);
 
             path = compute_path(cur_car->in_dir, cur_car->out_dir);
-
 
             for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
                 pthread_mutex_lock(&isection.quad[path[i]]);
@@ -235,18 +234,18 @@ void *car_cross(void *arg) {
             printf("trying to lock exit lane: %d\n", cur_car->out_dir);
             pthread_mutex_lock(&exit_lane->lock);
             printf("locked exit lane: %d\n", cur_car->out_dir);
-            //cur_car->next = exit_lane->out_cars;
             exit_lane->out_cars = cur_car;
             exit_lane->passed++;
             
             pthread_mutex_unlock(&exit_lane->lock);
-            pthread_cond_signal(&l->producer_cv);
  
             for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
                 pthread_mutex_unlock(&isection.quad[path[i]]);
             }
 
             free(path);
+            //break;
+            pthread_mutex_lock(&l->lock);
         }
         pthread_mutex_unlock(&l->lock);
         break;
