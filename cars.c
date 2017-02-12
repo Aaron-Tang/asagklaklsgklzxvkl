@@ -113,7 +113,7 @@ void init_intersection() {
         new_lane->buffer = &buffer;
 
         // add new lane to lanes array
-        isection.lanes[i] = *new_lane;
+        isection.lanes[i] = *(new_lane);
     }
 }
 
@@ -180,7 +180,6 @@ void *car_cross(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
 
-    struct lane * exit_lane;
     int *path;
     int i;
 
@@ -206,7 +205,7 @@ void *car_cross(void *arg) {
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
             cur_car->out_dir, cur_car->in_dir);
 
-        exit_lane = &isection.lanes[cur_car->out_dir];
+        struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
         //pthread_mutex_lock(&exit_lane->lock);
         cur_car->next = exit_lane->out_cars;

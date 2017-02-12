@@ -22,6 +22,7 @@ void verify() {
 
         /* iterate through all cars in the lanes out_cars */
         for (cur = isection.lanes[i].out_cars; cur != NULL; cur = cur->next) {
+            printf("Pointer to next car: %d\n", cur->next->id);
             printf("%d %d %d\n", cur->in_dir, cur->out_dir, cur->id);
         }
     }
