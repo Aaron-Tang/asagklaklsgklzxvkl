@@ -194,7 +194,7 @@ void *car_cross(void *arg) {
         // BETWEEN HERE
         struct car *cur_car = l->buffer[l->head];
         printf("Current Car: %d\n", l->buffer[l->head]->id);
-        printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
+        // printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
 
@@ -213,9 +213,12 @@ void *car_cross(void *arg) {
 
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
+        pthread_mutex_lock(&exit_lane->lock);
         exit_lane->out_cars = cur_car;
-        // cur_car->next = NULL;
+        cur_car->next = NULL;
         exit_lane->passed++;
+        pthread_mutex_unlock(&exit_lane->lock);
+
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
