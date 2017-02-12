@@ -213,7 +213,7 @@ void *car_cross(void *arg) {
 
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
-        //cur_car->next = NULL;
+        cur_car->next = NULL;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
