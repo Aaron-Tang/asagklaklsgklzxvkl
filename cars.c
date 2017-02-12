@@ -198,9 +198,9 @@ void *car_cross(void *arg) {
         //printf("Current Car: %d\n", l->buffer[l->head]->id);
         //printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
         
-        l->head += 1;
-        if (l->head == l->capacity)
-            l->head = 0;
+        // l->head += 1;
+        // if (l->head == l->capacity)
+        //     l->head = 0;
 
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
            cur_car->out_dir, cur_car->in_dir);
