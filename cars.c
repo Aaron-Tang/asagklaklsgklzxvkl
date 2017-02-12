@@ -94,7 +94,7 @@ void init_intersection() {
         // create a new lane
         struct lane* new_lane;
         new_lane = malloc(sizeof(struct lane));
-        //memset(new_lane, 0, sizeof(struct lane));
+        memset(new_lane, 0, sizeof(struct lane));
 
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
@@ -109,7 +109,7 @@ void init_intersection() {
         new_lane->in_buf = 0;
 
         struct car* buffer = malloc(LANE_LENGTH * sizeof(struct car));
-        //memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car)));
+        memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car)));
         new_lane->buffer = &buffer;
 
         // add new lane to lanes array
@@ -153,9 +153,9 @@ void *car_arrive(void *arg) {
    
             pCar = pCar->next;
             
-            pthread_cond_signal(&l->consumer_cv);
-
             pthread_mutex_unlock(&l->lock);
+            pthread_cond_signal(&l->consumer_cv);
+            
             break;    
         }
     }
@@ -218,26 +218,27 @@ void *car_cross(void *arg) {
 
             path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
+            /*
             for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
                 pthread_mutex_lock(&isection.quad[path[i]]);
             }
-
-            for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
-                pthread_mutex_unlock(&isection.quad[path[i]]);
-            }
-
-            free(path);
-
+            */
             struct lane* exit_lane = &isection.lanes[cur_car->out_dir];
             pthread_mutex_lock(&exit_lane->lock);
+            
             //cur_car->next = exit_lane->out_cars;
             exit_lane->out_cars = cur_car;
             exit_lane->passed++;
-
-            pthread_mutex_unlock(&exit_lane->lock);
-
+            
             l->in_buf -= 1;
+            pthread_mutex_unlock(&exit_lane->lock);
             pthread_cond_signal(&l->producer_cv);
+            /*    
+            for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+                pthread_mutex_unlock(&isection.quad[path[i]]);
+            }
+            */
+            free(path);
         }
 
         break;
