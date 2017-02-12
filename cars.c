@@ -137,6 +137,7 @@ void *car_arrive(void *arg) {
 
         if (l->inc <= 0) {
             pthread_mutex_unlock(&l->lock);
+            pthread_cond_signal(&l->consumer_cv);
             break;
         }
 
