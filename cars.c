@@ -141,13 +141,12 @@ void *car_arrive(void *arg) {
             break;
         }
 
-        struct car* pCar = l->in_cars;
-        while (pCar != NULL) {
+        while (l->in_cars != NULL) {
             while(l->in_buf == l->capacity) {
                 pthread_cond_wait(&l->producer_cv, &l->lock);
             }
 
-            l->buffer[l->tail] = pCar;
+            l->buffer[l->tail] = l->in_cars;
 
             l->tail += 1;
             if (l->tail == l->capacity)
@@ -160,7 +159,9 @@ void *car_arrive(void *arg) {
 
             pthread_mutex_unlock(&l->lock);
             pthread_cond_signal(&l->consumer_cv);
+            printf("loop\n");
             
+
             break;    
         }
     }
