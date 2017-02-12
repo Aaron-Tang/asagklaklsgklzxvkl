@@ -100,7 +100,7 @@ void init_intersection() {
         new_lane->producer_cv = prod_cv;
         new_lane->consumer_cv = cons_cv;
         new_lane->in_cars = NULL;
-        new_lane->out_cars = NULL;
+        //new_lane->out_cars = NULL;
         new_lane->inc = 0;
         new_lane->passed = 0;
         new_lane->head = 0;
@@ -178,7 +178,7 @@ void *car_arrive(void *arg) {
 // SOMETHING IN HERE IS WRONG
 void *car_cross(void *arg) {
     struct lane *l = arg;
-    //PrintLane(l, "TEST");
+    PrintLane(l, "TEST");
     pthread_mutex_lock(&l->lock);
 
     int *path;
