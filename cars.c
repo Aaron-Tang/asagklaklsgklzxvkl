@@ -94,7 +94,7 @@ void init_intersection() {
         // create a new lane
         struct lane* new_lane;
         new_lane = malloc(sizeof(struct lane));
-        memset(new_lane, 0, sizeof(struct lane));
+        //memset(new_lane, 0, sizeof(struct lane));
 
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
@@ -107,9 +107,9 @@ void init_intersection() {
         new_lane->tail = 0;
         new_lane->capacity = LANE_LENGTH;
         new_lane->in_buf = 0;
-        // DOUBLE CHECK THIS AT OFFICE HOURS
+
         struct car* buffer = malloc(LANE_LENGTH * sizeof(struct car));
-        memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car)));
+        //memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car)));
         new_lane->buffer = &buffer;
 
         // add new lane to lanes array
@@ -187,8 +187,7 @@ void *car_cross(void *arg) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
 
-        struct car *cur_car = malloc(sizeof(struct car));
-        cur_car = l->buffer[l->head];
+        struct car *cur_car = l->buffer[l->head];
 
         // need to update new head
         //l->buffer[l->head] = NULL;
@@ -225,6 +224,7 @@ void *car_cross(void *arg) {
 
         pthread_cond_signal(&l->producer_cv);
     }
+
     free(path);
     pthread_mutex_unlock(&l->lock);
     return NULL;
