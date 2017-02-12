@@ -217,6 +217,8 @@ void *car_cross(void *arg) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
 
+        PrintLane(l, "After Car leaves");
+
 
     }
 
