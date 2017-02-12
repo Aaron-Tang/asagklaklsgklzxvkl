@@ -201,7 +201,7 @@ void *car_cross(void *arg) {
         // if (l->head == l->capacity - 1)
         //     l->head = 0;
         //l->head += 1;
-        l->in_buf -= 1;
+        //l->in_buf -= 1;
         l->inc -= 1;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
