@@ -139,6 +139,7 @@ void *car_arrive(void *arg) {
         }
 
         l->buffer[l->tail] = pCar;
+        l->buffer[l->tail]->next = NULL;
         if (l->tail == l->capacity - 1)
             l->tail = 0;
         l->tail += 1;
@@ -195,7 +196,6 @@ void *car_cross(void *arg) {
         struct car *cur_car = l->buffer[l->head];
         printf("Current Car: %d\n", l->buffer[l->head]->id);
         printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
-        printf("Head: %d\n", l->head);
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
         l->buffer[l->head] = NULL;
 
@@ -203,7 +203,6 @@ void *car_cross(void *arg) {
             l->head = 0;
         l->head += 1;
 
-        printf("After get car head: %d\n", l->head);
 
         l->in_buf -= 1;
         //l->inc -= 1;
