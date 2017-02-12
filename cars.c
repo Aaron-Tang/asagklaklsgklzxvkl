@@ -190,7 +190,7 @@ void *car_cross(void *arg) {
         }   
 
         struct car *cur_car = l->buffer[l->head];
-        printf("Current Car: %d\n", l->buffer[l->head]->id);
+        //printf("Current Car: %d\n", l->buffer[l->head]->id);
         printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
