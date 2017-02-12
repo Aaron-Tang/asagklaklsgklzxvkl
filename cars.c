@@ -198,13 +198,13 @@ void *car_cross(void *arg) {
     
     while(1) {
         int *path;
-        int i, k;
+        int i;
 
         pthread_mutex_lock(&l->lock);
         printf("locked car cross lane: %d\n", l->id);
 
-        for (k = l->inc; k > 0; k--) {
-
+        while (l->inc != 0) {
+            l->inc--;
             while(l->in_buf == 0) {
                 pthread_cond_wait(&l->consumer_cv, &l->lock);
             }   
