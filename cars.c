@@ -216,7 +216,7 @@ void *car_cross(void *arg) {
 
         //pthread_mutex_lock(&exit_lane->lock);
         exit_lane->out_cars = cur_car;
-         cur_car->next = NULL;
+        //cur_car->next = NULL;
         //pthread_mutex_unlock(&exit_lane->lock);
 
         exit_lane->passed++;
