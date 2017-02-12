@@ -208,12 +208,12 @@ void *car_cross(void *arg) {
 
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
-        //pthread_mutex_lock(&exit_lane->lock);
+        pthread_mutex_lock(&exit_lane->lock);
         cur_car->next = NULL;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
         //printf("The car in front of me in out: %d", exit_lane->out_cars->next->id);
-        //pthread_mutex_unlock(&exit_lane->lock);
+        pthread_mutex_unlock(&exit_lane->lock);
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
