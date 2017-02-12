@@ -178,7 +178,7 @@ void *car_arrive(void *arg) {
 // SOMETHING IN HERE IS WRONG
 void *car_cross(void *arg) {
     struct lane *l = arg;
-    PrintLane(l, "TEST");
+    //PrintLane(l, "TEST");
     pthread_mutex_lock(&l->lock);
 
     int *path;
@@ -189,8 +189,7 @@ void *car_cross(void *arg) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
 
-        struct car *cur_car = malloc(sizeof(struct car));
-        cur_car = l->buffer[l->head];
+        struct car *cur_car = l->buffer[l->head];
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
 
@@ -205,21 +204,20 @@ void *car_cross(void *arg) {
         }
 
         // PROBABLY IN THIS AREA
-        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
-            cur_car->out_dir, cur_car->in_dir);
+        //printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
+        //    cur_car->out_dir, cur_car->in_dir);
 
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
         cur_car->next = NULL;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
-        //printf("The car in front of me in out: %d", exit_lane->out_cars->next->id);
-        pthread_cond_signal(&l->producer_cv);
-
+        //printf("The car in front of me in out: %d", exit_lane->out_cars->next->id)
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
-        free(cur_car);
+
+
     }
 
     free(path);
