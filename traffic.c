@@ -5,27 +5,6 @@
 
 struct intersection isection;
 
-void PrintLane2(struct lane* pLane, char* pTag)
-{
-    printf("Tag: %s\n", pTag);
-    printf("Inc: %d\n", pLane->inc);
-    printf("Passed: %d\n", pLane->passed);
-    printf("Head: %d\n", pLane->head);
-    printf("Tail: %d\n", pLane->tail);
-    printf("Capacity: %d\n", pLane->capacity);
-    printf("In_buff: %d\n", pLane->in_buf);
-
-    struct car* pCar = pLane->in_cars;
-    while (pCar != NULL) 
-    {
-        printf("Car id: %d\n", pCar->id);
-        pCar = pCar->next;
-    }
-
-    printf("\n");
-}
-
-
 /*
  *
  * Prints the state of each lanes out_cars. This code is used
@@ -43,7 +22,6 @@ void verify() {
 
         /* iterate through all cars in the lanes out_cars */
         for (cur = isection.lanes[i].out_cars; cur != NULL; cur = cur->next) {
-            //printf("Pointer to next car: %d\n", cur->next->id);
             printf("%d %d %d\n", cur->in_dir, cur->out_dir, cur->id);
         }
     }
@@ -82,11 +60,6 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
     }
-
-    PrintLane2(&isection.lanes[0], "NORTH LANE");
-    PrintLane2(&isection.lanes[1], "EAST LANE");
-    PrintLane2(&isection.lanes[2], "SOUTH LANE");
-    PrintLane2(&isection.lanes[3], "WEST LANE");
 
 	verify();
 

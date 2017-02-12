@@ -141,7 +141,7 @@ void *car_arrive(void *arg) {
             l->tail = 0;
         l->tail += 1;
         l->in_buf += 1;
- 
+        PrintLane(l, "HERE");
         pthread_cond_signal(&l->consumer_cv);
  
         pCar = pCar->next;
