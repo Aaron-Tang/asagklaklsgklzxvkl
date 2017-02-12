@@ -133,7 +133,7 @@ void *car_arrive(void *arg) {
     struct lane* l = arg;
     while (1) {
         pthread_mutex_lock(&l->lock);
-        printf("car arrive lane: %d\n", l->id);
+        printf("locked car arrive lane: %d\n", l->id);
 
         if (l->inc <= 0) {
             pthread_mutex_unlock(&l->lock);
@@ -194,11 +194,10 @@ void *car_arrive(void *arg) {
 // SOMETHING IN HERE IS WRONG
 void *car_cross(void *arg) {
     struct lane *l = arg;
-
+    
     while(1) {
-
         pthread_mutex_lock(&l->lock);
-        printf("locked cross lane: %d\n", l->id);
+        printf("locked car cross lane: %d\n", l->id);
 
         int *path;
         int i, k;
@@ -228,9 +227,9 @@ void *car_cross(void *arg) {
             }
             */
             struct lane* exit_lane = &isection.lanes[cur_car->out_dir];
-            printf("locking exit lane: %d\n", cur_car->out_dir);
+            printf("trying to lock exit lane: %d\n", cur_car->out_dir);
             pthread_mutex_lock(&exit_lane->lock);
-
+            printf("locked exit lane: %d\n", cur_car->out_dir);
             //cur_car->next = exit_lane->out_cars;
             exit_lane->out_cars = cur_car;
             exit_lane->passed++;
@@ -245,11 +244,10 @@ void *car_cross(void *arg) {
             */
             free(path);
         }
-
+        pthread_mutex_unlock(&l->lock);
         break;
     }
 
-    pthread_mutex_unlock(&l->lock);
     return NULL;
 }
 
