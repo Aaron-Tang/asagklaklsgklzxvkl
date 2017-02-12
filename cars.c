@@ -201,7 +201,7 @@ void *car_cross(void *arg) {
         printf("locked car cross lane: %d\n", l->id);
 
         int *path;
-        int i, k;
+        int k;
 
         for (k = l->inc; k > 0; k--) {
             while(l->in_buf == 0) {
@@ -213,9 +213,9 @@ void *car_cross(void *arg) {
             //printf("Current Car: %d\n", l->buffer[l->head]->id);
             //printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
             
-            // l->head += 1;
-            // if (l->head == l->capacity)
-            //     l->head = 0;
+            l->head += 1;
+            if (l->head == l->capacity)
+                l->head = 0;
 
             pthread_mutex_unlock(&l->lock);
 
