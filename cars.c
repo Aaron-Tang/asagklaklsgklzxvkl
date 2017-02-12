@@ -214,7 +214,7 @@ void *car_cross(void *arg) {
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
         exit_lane->out_cars = cur_car;
-        cur_car->next = NULL;
+        // cur_car->next = NULL;
         exit_lane->passed++;
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
