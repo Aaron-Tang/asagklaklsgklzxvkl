@@ -184,9 +184,9 @@ void *car_cross(void *arg) {
     pthread_mutex_lock(&l->lock);
 
     int *path;
-    int i;
+    int i, k;
 
-    while (l->inc > 0){
+    for (k = l->inc; k > 0; k--){
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
@@ -206,7 +206,7 @@ void *car_cross(void *arg) {
         printf("After get car head: %d\n", l->head);
 
         l->in_buf -= 1;
-        l->inc -= 1;
+        //l->inc -= 1;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_lock(&isection.quad[path[i]]);
