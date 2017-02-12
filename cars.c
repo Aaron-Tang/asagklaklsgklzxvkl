@@ -178,7 +178,7 @@ void *car_cross(void *arg) {
     struct lane *l = arg;
     pthread_mutex_lock(&l->lock);
     struct car *cur_car = l->buffer[l->head];
-    struct lane *exit_lane;
+    struct lane * exit_lane;
     int *path;
     int i;
 
@@ -204,10 +204,11 @@ void *car_cross(void *arg) {
         // adds cur_car to out_cars in exit lane
 
 
-        exit_lane = &isection.lanes[cur_car->out_dir];
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
             cur_car->out_dir, cur_car->in_dir);
 
+        exit_lane = &isection.lanes[cur_car->out_dir];
+        cur_car->next = NULL;
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
