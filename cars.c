@@ -110,9 +110,9 @@ void init_intersection() {
         new_lane->capacity = LANE_LENGTH;
         new_lane->in_buf = 0;
 
-        struct car* buffer = malloc(LANE_LENGTH * sizeof(struct car*));
+        struct car** buffer = malloc(LANE_LENGTH * sizeof(struct car*));
         memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car*)));
-        new_lane->buffer = &buffer;
+        new_lane->buffer = buffer;
 
         // add new lane to lanes array
         isection.lanes[i] = *new_lane;
