@@ -183,7 +183,7 @@ void *car_cross(void *arg) {
     int *path;
     int i;
 
-    while (l->inc > 0){
+    while (l->inc >= 0){
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
