@@ -215,9 +215,10 @@ void *car_cross(void *arg) {
 
         pthread_mutex_lock(&exit_lane->lock);
         exit_lane->out_cars = cur_car;
-        cur_car->next = NULL;
-        exit_lane->passed++;
+        // cur_car->next = NULL;
         pthread_mutex_unlock(&exit_lane->lock);
+
+        exit_lane->passed++;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
