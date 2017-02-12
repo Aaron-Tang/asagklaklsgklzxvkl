@@ -131,7 +131,7 @@ void *car_arrive(void *arg) {
 
     struct car* pCar = l->in_cars;
 
-    while (pCar != NULL) {
+    while (l->inc > 0) {
         while(l->in_buf == l->capacity) {
             pthread_cond_wait(&l->producer_cv, &l->lock);
         }
@@ -145,6 +145,7 @@ void *car_arrive(void *arg) {
         pthread_cond_signal(&l->consumer_cv);
  
         pCar = pCar->next;
+        l->inc--;
     }
     // might be broadcast
     //PrintLane(l, "TEST");
