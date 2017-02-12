@@ -110,8 +110,8 @@ void init_intersection() {
         new_lane->capacity = LANE_LENGTH;
         new_lane->in_buf = 0;
 
-        struct car** buffer = malloc(LANE_LENGTH * sizeof(struct car*));
-        memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car*)));
+        struct car** buffer = (struct car**) malloc(LANE_LENGTH * sizeof(struct car*));
+        //memset(buffer, 0 , sizeof(LANE_LENGTH * sizeof(struct car*)));
         new_lane->buffer = buffer;
 
         // add new lane to lanes array
@@ -236,8 +236,11 @@ void *car_cross(void *arg) {
             printf("locked exit lane: %d\n", cur_car->out_dir);
 
             if (!exit_lane->out_cars)
+            {
                 printf("exit_lane->out_cars is null\n");
-
+            }
+            printf("car id: %d\n", cur_car->id);
+        
 
             cur_car->next = exit_lane->out_cars;
             exit_lane->out_cars = cur_car;
