@@ -86,6 +86,7 @@ void init_intersection() {
     // OFFICE HOURS
     int i;
     for (i = 0; i < 4; i++) {
+
         // initialize locks
         pthread_mutex_t lane_mutex = PTHREAD_MUTEX_INITIALIZER;
         pthread_cond_t prod_cv = PTHREAD_COND_INITIALIZER;
@@ -96,6 +97,7 @@ void init_intersection() {
         new_lane = malloc(sizeof(struct lane));
         memset(new_lane, 0, sizeof(struct lane));
 
+        new_lane->id = i;
         new_lane->lock = lane_mutex;
         new_lane->producer_cv = prod_cv;
         new_lane->consumer_cv = cons_cv;
@@ -131,6 +133,7 @@ void *car_arrive(void *arg) {
     struct lane* l = arg;
     while (1) {
         pthread_mutex_lock(&l->lock);
+        printf("car arrive lane: %d\n", l->id);
 
         if (l->inc <= 0) {
             pthread_mutex_unlock(&l->lock);
@@ -195,6 +198,7 @@ void *car_cross(void *arg) {
     while(1) {
 
         pthread_mutex_lock(&l->lock);
+        printf("locked cross lane: %d\n", l->id);
 
         int *path;
         int i, k;
@@ -224,8 +228,9 @@ void *car_cross(void *arg) {
             }
             */
             struct lane* exit_lane = &isection.lanes[cur_car->out_dir];
+            printf("locking exit lane: %d\n", cur_car->out_dir);
             pthread_mutex_lock(&exit_lane->lock);
-            
+
             //cur_car->next = exit_lane->out_cars;
             exit_lane->out_cars = cur_car;
             exit_lane->passed++;
