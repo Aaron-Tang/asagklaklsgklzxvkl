@@ -178,12 +178,13 @@ void *car_arrive(void *arg) {
 // SOMETHING IN HERE IS WRONG
 void *car_cross(void *arg) {
     struct lane *l = arg;
+    PrintLane(l, "TEST");
     pthread_mutex_lock(&l->lock);
 
     int *path;
     int i;
 
-    while (l->inc >= 0){
+    while (l->inc > 0){
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
