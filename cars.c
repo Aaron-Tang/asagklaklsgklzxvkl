@@ -147,7 +147,7 @@ void *car_arrive(void *arg) {
         pCar = pCar->next;
     }
     // might be broadcast
-    PrintLane(l, "TEST");
+    //PrintLane(l, "TEST");
     pthread_mutex_unlock(&l->lock);
     return NULL;
 }
@@ -212,11 +212,11 @@ void *car_cross(void *arg) {
         cur_car->next = NULL;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
-        //printf("The car in front of me in out: %d", exit_lane->out_cars->next->id)
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
 
+        pthread_cond_signal(&l->producer_cv);
 
     }
 
