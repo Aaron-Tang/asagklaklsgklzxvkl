@@ -193,15 +193,15 @@ void *car_cross(void *arg) {
 
         // BETWEEN HERE
         struct car *cur_car = l->buffer[l->head];
-        //printf("Current Car: %d\n", l->buffer[l->head]->id);
+        printf("Current Car: %d\n", l->buffer[l->head]->id);
         printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
 
-        // if (l->head == l->capacity - 1)
-        //     l->head = 0;
-        //l->head += 1;
-        //l->in_buf -= 1;
+        if (l->head == l->capacity - 1)
+            l->head = 0;
+        l->head += 1;
+        l->in_buf -= 1;
         l->inc -= 1;
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
