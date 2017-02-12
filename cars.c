@@ -215,7 +215,8 @@ void *car_cross(void *arg) {
 
         int* path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
-        for (int i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+        int i;
+        for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_lock(&isection.quad[path[i]]);
         }
 
@@ -229,7 +230,7 @@ void *car_cross(void *arg) {
         
         pthread_mutex_unlock(&exit_lane->lock);
 
-        for (int i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+        for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
         free(path);
