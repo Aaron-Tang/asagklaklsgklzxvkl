@@ -136,7 +136,7 @@ void *car_arrive(void *arg) {
         //printf("locked car arrive lane: %d\n", l->id);
 
         if (l->inc <= 0) {
-            //pthread_mutex_unlock(&l->lock);
+            pthread_mutex_unlock(&l->lock);
             pthread_cond_signal(&l->consumer_cv);
             break;
         }
@@ -233,9 +233,9 @@ void *car_cross(void *arg) {
             }
 
             struct lane* exit_lane = &isection.lanes[cur_car->out_dir];
-            //printf("trying to lock exit lane: %d\n", cur_car->out_dir);
+            printf("trying to lock exit lane: %d\n", cur_car->out_dir);
             pthread_mutex_lock(&exit_lane->lock);
-            //printf("locked exit lane: %d\n", cur_car->out_dir);
+            printf("locked exit lane: %d\n", cur_car->out_dir);
 
             if (!exit_lane->out_cars)
             {
