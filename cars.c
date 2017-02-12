@@ -189,7 +189,8 @@ void *car_cross(void *arg) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
 
-        struct car *cur_car = l->buffer[l->head];
+        struct car *cur_car = malloc(sizeof(struct car));
+        cur_car = l->buffer[l->head];
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
 
@@ -218,8 +219,7 @@ void *car_cross(void *arg) {
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
-
-
+        free(cur_car);
     }
 
     free(path);
