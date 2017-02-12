@@ -190,11 +190,8 @@ void *car_cross(void *arg) {
         }   
 
         struct car *cur_car = l->buffer[l->head];
-
-        // need to update new head
-        //l->buffer[l->head] = NULL;
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
-        //cur_car->next = NULL;
+
 
         if (l->head == l->capacity - 1)
             l->head = 0;
@@ -205,25 +202,22 @@ void *car_cross(void *arg) {
             pthread_mutex_lock(&isection.quad[path[i]]);
         }
 
-        // adds cur_car to out_cars in exit lane
-
         // PROBABLY IN THIS AREA
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
             cur_car->out_dir, cur_car->in_dir);
 
         exit_lane = &isection.lanes[cur_car->out_dir];
-        //cur_car->next = NULL;
-        pthread_mutex_lock(&exit_lane->lock);
+
+        //pthread_mutex_lock(&exit_lane->lock);
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
-        pthread_mutex_unlock(&exit_lane->lock);
+        //pthread_mutex_unlock(&exit_lane->lock);
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
 
-        // Decrements in_buf because cur_car has left buffer
         l->inc -= 1;
 
         pthread_cond_signal(&l->producer_cv);
