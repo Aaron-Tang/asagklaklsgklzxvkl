@@ -188,7 +188,7 @@ void *car_cross(void *arg) {
 
         // need to update new head
         cur_car = l->buffer[l->head];
-        l->buffer[l->head] = NULL;
+        //l->buffer[l->head] = NULL;
         path = compute_path(cur_car->in_dir, cur_car->out_dir);
         cur_car->next = NULL;
 
