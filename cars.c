@@ -211,6 +211,7 @@ void *car_cross(void *arg) {
         cur_car->next = exit_lane->out_cars;
         exit_lane->out_cars = cur_car;
         exit_lane->passed++;
+        printf("The car in front of me in out: %d", exit_lane->out_cars->next->id);
         //pthread_mutex_unlock(&exit_lane->lock);
 
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
