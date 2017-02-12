@@ -147,7 +147,7 @@ void *car_arrive(void *arg) {
         pCar = pCar->next;
     }
     // might be broadcast
-    //PrintLane(l, "TEST");
+    PrintLane(l, "TEST");
     pthread_mutex_unlock(&l->lock);
     return NULL;
 }
@@ -184,7 +184,7 @@ void *car_cross(void *arg) {
     int *path;
     int i;
 
-    while (l->inc > 0 || l->head != l->tail){
+    while (l->inc > 0){
         while(l->in_buf == 0) {
             pthread_cond_wait(&l->consumer_cv, &l->lock);
         }   
@@ -204,8 +204,8 @@ void *car_cross(void *arg) {
         }
 
         // PROBABLY IN THIS AREA
-        printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
-           cur_car->out_dir, cur_car->in_dir);
+        //printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
+        //    cur_car->out_dir, cur_car->in_dir);
 
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
@@ -216,8 +216,6 @@ void *car_cross(void *arg) {
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
-
-        PrintLane(l, "After Car leaves");
 
 
     }
