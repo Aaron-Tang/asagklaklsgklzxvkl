@@ -140,9 +140,10 @@ void *car_arrive(void *arg) {
 
         l->buffer[l->tail] = pCar;
 
-        if (l->tail == l->capacity - 1)
-            l->tail = 0;
         l->tail += 1;
+        if (l->tail == l->capacity)
+            l->tail = 0;
+
         l->in_buf += 1;
  
         pthread_cond_signal(&l->consumer_cv);
@@ -182,7 +183,6 @@ void *car_arrive(void *arg) {
 // SOMETHING IN HERE IS WRONG
 void *car_cross(void *arg) {
     struct lane *l = arg;
-    //PrintLane(l, "TEST");
     pthread_mutex_lock(&l->lock);
 
     int *path;
@@ -198,37 +198,27 @@ void *car_cross(void *arg) {
         printf("Current Car: %d\n", l->buffer[l->head]->id);
         printf("Next Car: %d\n", l->buffer[l->head + 1]->id);
         
-        l->buffer[l->head] = NULL;
-
-        if (l->head == l->capacity - 1)
-            l->head = 0;
         l->head += 1;
-
-        path = compute_path(cur_car->in_dir, cur_car->out_dir);
-
-
-        for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
-            pthread_mutex_lock(&isection.quad[path[i]]);
-        }
+        if (l->head == l->capacity)
+            l->head = 0;
 
         printf("ID: %d || out_dir: %d || in_dir: %d\n", cur_car->id, 
            cur_car->out_dir, cur_car->in_dir);
 
         struct lane * exit_lane = &isection.lanes[cur_car->out_dir];
 
-        //pthread_mutex_lock(&exit_lane->lock);
-        //cur_car->next = exit_lane->out_cars;
-        if (exit_lane->out_cars == NULL)
-            exit_lane->out_cars = cur_car;
-        exit_lane->out_cars->next = cur_car;
-        exit_lane->out_cars = cur_car;
-        //pthread_mutex_unlock(&exit_lane->lock);
+        path = compute_path(cur_car->in_dir, cur_car->out_dir);
 
-        exit_lane->passed++;
-
+        for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
+            pthread_mutex_lock(&isection.quad[path[i]]);
+        }
         for (i = 0; i < (sizeof(path)/sizeof(int)); i++) {
             pthread_mutex_unlock(&isection.quad[path[i]]);
         }
+
+        //cur_car->next = exit_lane->out_cars;
+        exit_lane->out_cars = cur_car;
+        exit_lane->passed++;
 
         l->in_buf -= 1;
         pthread_cond_signal(&l->producer_cv);
